@@ -1,0 +1,61 @@
+{
+  "name": "sunbaked",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/phaserjs/template-solid.git"
+  },
+  "author": "Phaser Studio <support@phaser.io> (https://phaser.io/)",
+  "license": "MIT",
+  "licenseUrl": "http://www.opensource.org/licenses/mit-license.php",
+  "bugs": {
+    "url": "https://github.com/phaserjs/template-solid/issues"
+  },
+  "homepage": "https://github.com/phaserjs/template-solid#readme",
+  "keywords": [
+    "phaser",
+    "phaser3",
+    "solidjs",
+    "vite",
+    "typescript"
+  ],
+  "scripts": {
+    "dev": "vite --config vite/config.dev.mjs",
+    "build-raw": "vite build --config vite/config.prod.mjs",
+    "build": "npm run build-raw && node compress.mjs",
+    "build-no-comp": "bun run build-raw",
+    "build-assets": "bun ./development_utils/clean-ship-data.ts",
+    "build-images": "bun ./process-images.js",
+    "deploy-raw": "npm run build-raw && firebase deploy",
+    "deploy": "npm run build && firebase deploy"
+  },
+  "dependencies": {
+    "@babel/runtime": "7.24.7",
+    "@dimforge/rapier2d": "^0.14.0",
+    "@dimforge/rapier2d-compat": "^0.14.0",
+    "@dimforge/rapier3d-compat": "^0.14.0",
+    "@tweenjs/tween.js": "23.1.2",
+    "@types/intersects": "^2.7.5",
+    "device-rotation-prompt": "^2.0.0",
+    "firebase": "^10.13.0",
+    "intersects": "^2.7.2",
+    "joystick-controller": "^1.1.1",
+    "msgpack-lite": "^0.1.26",
+    "phaser": "^3.85.2",
+    "sharp": "^0.33.5",
+    "solid-js": "1.8.15",
+    "three": "0.165.0",
+    "three.quarks": "0.12.4",
+    "zip-a-folder": "^3.1.7"
+  },
+  "devDependencies": {
+    "@types/msgpack-lite": "^0.1.11",
+    "@types/node": "^20.12.12",
+    "@types/three": "0.165.0",
+    "@types/three-nebula": "^10.0.4",
+    "terser": "^5.28.1",
+    "typescript": "5.2.2",
+    "vite": "5.1.4",
+    "vite-plugin-solid": "2.10.1"
+  }
+}

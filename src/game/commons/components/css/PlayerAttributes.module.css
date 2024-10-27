@@ -1,0 +1,29 @@
+.wrapper {
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    box-sizing: border-box;
+    user-select: none;
+}
+
+.header {
+    width: 100%;
+    background: var(--black);
+    color: var(--white);
+    padding: 7px 14px;
+    border-radius: 2px;
+    font-size: 25px;
+    font-weight: bold;
+    box-sizing: border-box;
+}
+
+.level {
+    display: flex;
+    align-items: start;
+    
+}
+.levelMax:before {
+    content: 'MAX';
+    font-size: 7px !important;
+    transform: translateY(3px);
+}

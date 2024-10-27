@@ -1,0 +1,17 @@
+.SectionHeader {
+    padding: 3px;
+    color: var(--black);
+    background-color: var(--white);
+    display: inline-block;
+    margin-bottom: 16px;
+    font-size: 25px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+@media screen and (max-width: 768px) {
+    .SectionHeader {
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+}

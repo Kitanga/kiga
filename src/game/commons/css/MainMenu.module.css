@@ -1,0 +1,26 @@
+.input {
+    background: var(--black);
+    color: var(--white);
+    border: 1px solid transparent;
+    outline: none;
+    text-align: center;
+    padding: 4px;
+    padding-right: 0;
+    font-size: 14px;
+
+    ::placeholder {
+        border: 1px solid var(--white);
+    }
+}
+
+.input.disabled {
+    background: var(--grey3) !important;
+    color: var(--grey2) !important;
+    pointer-events: none;
+}
+
+@media screen and (max-width: 768px) {
+    .input {
+        font-size: 7px;
+    }
+}
