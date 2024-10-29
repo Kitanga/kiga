@@ -75,12 +75,14 @@ const preloadItems = [
     loadGLTF('assets/models/ship.glb', MESH_NAMES.BASIC_1, () => {
         updateProgressBar();
     }),
-    loadGLTF('assets/models/missile.glb', MESH_NAMES.MISSILE, () => {
+    loadGLTF('assets/models/who-we-are.glb', MESH_NAMES.WHO_WE_ARE, () => {
         updateProgressBar();
     }),
-    loadGLTF('assets/models/Sponsor.glb', MESH_NAMES.SPONSOR_LOGO, (gltf) => {
+    loadGLTF('assets/models/what-we-do.glb', MESH_NAMES.WHAT_WE_DO, () => {
         updateProgressBar();
-        // console.log('island:', gltf);
+    }),
+    loadGLTF('assets/models/missile.glb', MESH_NAMES.MISSILE, () => {
+        updateProgressBar();
     }),
     loadGLTF('assets/models/box.glb', MESH_NAMES.BOX, (gltf) => {
         updateProgressBar();
@@ -90,44 +92,6 @@ const preloadItems = [
         updateProgressBar();
         // console.log('island:', gltf);
     }),
-    loadGLTF('assets/models/sails/default/default-sails.gltf', MESH_NAMES.BASIC_1_SAILS_DEFAULT, () => {
-        updateProgressBar();
-    }),
-    loadAndCacheTexture('form-50p.png', TEXTURE_NAMES.FOAM),
-    loadAndCacheTexture('splash-paddle.png', TEXTURE_NAMES.SPLASH_PADDLE),
-    loadAndCacheTexture('splash.png', TEXTURE_NAMES.SPLASH),
-    ...[
-        ...((window as any).IS_CRAZY_GAMES ? [
-            TEXTURE_NAMES.CRAZY_GAMES_WHITE,
-            TEXTURE_NAMES.CRAZY_GAMES_BLACK,
-            TEXTURE_NAMES.CRAZY_GAMES_PURPLE,
-        ] : []),
-        TEXTURE_NAMES.CROSS,
-        TEXTURE_NAMES.ZAMBIA,
-        TEXTURE_NAMES.BELGIUM,
-        TEXTURE_NAMES.GERMANY,
-        TEXTURE_NAMES.USA,
-        TEXTURE_NAMES.SA,
-    ].map(textureName => loadSailTexture(textureName, textureName)),
-    ...[
-        [AUDIO_NAMES.HELP_WELCOME, 'Start_help_1.m4a'],
-        [AUDIO_NAMES.HELP_MOVEMENT, 'Start_help_2.m4a'],
-        [AUDIO_NAMES.HELP_FIRING, 'Start_help_3.m4a'],
-        [AUDIO_NAMES.HELP_OUTRO, 'Start_help_4.m4a'],
-        [AUDIO_NAMES.HELP_CRUISE_BARRELS, 'torpedo_help.m4a'],
-        [AUDIO_NAMES.HELP_MOBILE_NO_SUPPORT, 'no_mobile.m4a'],
-        [AUDIO_NAMES.CHAMPION_OF_THE_SEA, 'champion.m4a'],
-        [AUDIO_NAMES.MAKE_THEM_REMEMBER, 'remember.m4a'],
-        [AUDIO_NAMES.GET_BACK, 'get-back.m4a'],
-    ].map(([key, slug]) => {
-        return new Promise<void>(res => {
-            audioLoader.load('snd/help-voice/' + slug, function (buffer) {
-                updateProgressBar();
-                res();
-                audio_repo[key] = buffer;
-            });
-        })
-    }),
     ...[
         [AUDIO_NAMES.SHIP_SINK, 'ship-sink-freq-500.m4a'],
         [AUDIO_NAMES.GUN_FIRE, 'gun-fire-freq-500.m4a'],
@@ -135,11 +99,9 @@ const preloadItems = [
         [AUDIO_NAMES.NO_GUN_FIRE, 'no-fire.m4a'],
         [AUDIO_NAMES.LEVEL_UP_SHOUT, 'level-up-shout-2.m4a'],
         [AUDIO_NAMES.PICK_UP, 'pickup.m4a'],
-        // [AUDIO_NAMES.MAIN_MENU, 'main-menu.m4a'],
         [AUDIO_NAMES.GAME_OVER, 'gameover.m4a'],
         [AUDIO_NAMES.BOSS, 'boss.m4a'],
         [AUDIO_NAMES.SHIP_HIT, 'hit-crack.m4a'],
-        // [AUDIO_NAMES.PICK_UP, 'switch21.ogg'],
     ].map(([key, slug]) => {
         return new Promise<void>(res => {
             audioLoader.load('snd/' + slug, function (buffer) {
@@ -150,31 +112,6 @@ const preloadItems = [
             });
         })
     }),
-    ...((window as any).IS_CRAZY_GAMES ? [
-        loadGLTF('assets/models/CrazyGames.glb', MESH_NAMES.CRAZY_GAMES, (gltf) => {
-            updateProgressBar();
-        }),
-    ] : []),
-    ...((window as any).IS_POKI ? [
-        loadGLTF('assets/models/poki.glb', MESH_NAMES.POKI, () => {
-            updateProgressBar();
-        }),
-    ] : []),
-    ...((window as any).IS_NEWGROUNDS ? [
-        loadGLTF('assets/models/newgrounds.glb', MESH_NAMES.NEWGROUNDS, () => {
-            updateProgressBar();
-        }),
-    ] : []),
-    ...((window as any).IS_ITCHIO ? [
-        loadGLTF('assets/models/itchio.glb', MESH_NAMES.ITCHIO, () => {
-            updateProgressBar();
-        }),
-    ] : []),
-    ...((window as any).IS_GAMEJOLT ? [
-        loadGLTF('assets/models/gamejolt.glb', MESH_NAMES.GAMEJOLT, () => {
-            updateProgressBar();
-        }),
-    ] : []),
 ];
 
 TOTAL_ITEMS = preloadItems.length;

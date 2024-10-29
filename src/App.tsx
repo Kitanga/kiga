@@ -1,32 +1,16 @@
-import { JSX, createEffect, createSignal, onCleanup, onMount } from 'solid-js';
+import { createEffect, createSignal, onCleanup, onMount } from 'solid-js';
 import { AnalyticsController } from './game/Controllers/AnalyticsController';
-import { AudioController } from './game/Controllers/AudioController';
 import { LocalStorageController } from './game/Controllers/LocalStorageController';
-import { ITransformPayload, NetController } from './game/Controllers/NetController';
-import { Notif, NotificationType } from './game/Controllers/NotifierController';
+import { ITransformPayload } from './game/Controllers/NetController';
+import { Notif } from './game/Controllers/NotifierController';
 import { SBGame } from './game/SBGame';
-import { SBGameMenu } from './game/SBGameMenu';
-import { SBGameLogo } from './game/commons/branding/SBGameLogo';
-import { Arrows2SVG } from './game/commons/components/Arrows2SVG';
-import { ArrowsSVG } from './game/commons/components/ArrowsSVG';
-import { Banner300x250 } from './game/commons/components/Banner300x250';
-import { ChatMessage } from './game/commons/components/ChatMessage';
-import { CustomizationItem } from './game/commons/components/CustomizationItem';
-import { CustomizationModalInner } from './game/commons/components/CustomizationModalInner';
-import { Modal } from './game/commons/components/Modal';
-import { PlayerAttributes } from './game/commons/components/PlayerAttributes';
-import { SectionHeader } from './game/commons/components/SectionHeader';
 import mainMenuStyles from './game/commons/css/MainMenu.module.css';
-import MapStyles from './game/commons/css/Map.module.css';
-import { SAIL_NAMES, SAILS_CUSTOMIZATIONS } from './game/commons/customizations/sails';
+import { SAIL_NAMES } from './game/commons/customizations/sails';
 import { LocalStorageKeys } from './game/commons/enums/LocalStorageKeys';
 import { EditIconSvg } from './game/commons/icons/EditIconSVG';
-import { InfoIconSvg } from './game/commons/icons/InfoIconSvg';
-import { auxClickResetInputs } from './game/commons/utils/auxClickResetInputs';
-import { getResourceLink } from './game/commons/utils/getResourceLink';
-import { CrazyGamesController, InviteLinkParams } from './game/commons/vendors/CrazyGamesController';
-import { BASE_PROJECTS_URL, CAMERA_POS, EXP_NEEDED_TO_LEVEL_UP, GAME_SIZE, MAP_SPECIAL_INDICATOR } from './game/constants';
+import { CrazyGamesController } from './game/commons/vendors/CrazyGamesController';
 import { PokiController } from './game/commons/vendors/PokiController';
+import { MAP_SPECIAL_INDICATOR } from './game/constants';
 
 export enum PageNames {
     HOME = 'home',
@@ -162,290 +146,81 @@ const App = () => {
 
     return (
         <div id="app">
-            {
-                current_page() == PageNames.PLAY && (<>
-                    <SBGame />
+            <SBGame />
 
-                    {/* Game Over modal */}
-                    {game_over() && <div
-                        style={{
-                            position: 'fixed',
-                            top: 0,
-                            left: 0,
-
-                            width: '100vw',
-                            height: '100vh',
-
-                            display: 'flex',
-                            "align-items": 'center',
-                            "justify-content": 'center',
-                            "flex-direction": 'column',
-
-                            "z-index": 9999,
-                        }}
-                        id='game-over'
-                    >
-                        {/* Closer */}
-                        <div
-                            style={{
-                                background: '#00000070',
-                                "backdrop-filter": 'grayscale(0.34)',
-                                width: '100%',
+            {/* Navigation */}
+            <nav style={{
+                color: 'var(--white)',
+                "text-shadow": '0 1px var(--black)',
+                position: 'fixed',
+                height: '20vh',
+                "z-index": '1000',
+                right: 0,
+                "padding-right": '16px',
+                "text-align": 'right',
+                display: 'grid',
+                "grid-template-rows": '0.05fr 0.4fr 0.7fr 0.3fr',
+                gap: '4px',
+            }}>
+                {[
+                    ['home', 'Home'],
+                    ['who-we-are', 'Who we are'],
+                    ['what-we-do', 'What we do'],
+                    ['contact', 'Contact'],
+                ].map(([id, label], ix) => {
+                    return <div id={id} style={{
+                        cursor: 'pointer',
+                        display: 'flex',
+                        "justify-content": 'space-between',
+                        gap: '8px',
+                    }}
+                    onClick={() => {
+                        window.setThreshold(ix);
+                    }}>
+                        <span>{label}</span>
+                        <span>
+                            <div style={{
+                                width: '7px',
                                 height: '100%',
-                                cursor: 'pointer',
-                            }}
-                            onClick={() => {
-                                const respawnBtn = document.getElementById('respawn-btn');
-
-                                if (respawnBtn && !respawnBtn.classList.contains('disabled')) {
-                                    respawnBtn.click();
-                                }
-
-                                console.log('game over closer clicked');
-                            }}
-                        ></div>
-                        <div style={{
-                            position: 'fixed',
-                            top: 0,
-                            left: 0,
-                            display: 'flex',
-                            "align-items": 'center',
-                            "justify-content": 'center',
-                            "flex-direction": 'column',
-                            width: '100%',
-                            height: '100%',
-                            "pointer-events": 'none',
-                        }}>
-                            <div
-                                style={{
-                                    "pointer-events": 'all',
-                                }}
-                            >
-                                {/* <div style={{
-                                    color: 'white',
-                                    width: '100%',
-                                    "text-align": 'right',
-                                    cursor: 'pointer',
-                                }}>x</div> */}
-                                <div
-                                    style={{
-                                        display: 'grid',
-                                        // "grid-template": '5fr 2fr',
-                                        gap: '8px',
-                                        "box-sizing": 'border-box',
-                                        padding: '0px 8px'
-                                    }}
-                                    id="game-over-inner"
-                                >
-                                    <div style={{
-                                        padding: '3.4vh 10vw',
-                                        // "aspect-ratio": '1',
-                                        background: 'var(--white)',
-                                        color: 'var(--black)',
-                                        "text-align": 'center',
-                                    }}>
-                                        <h2 style={{
-                                            "margin-top": '0px',
-                                        }}>You died. Go. Again! 🫡</h2>
-
-                                        <div style={{
-                                            display: 'grid',
-                                            "grid-template-rows": '1fr 1fr',
-                                            gap: '8px',
-                                        }}>
-                                            <div
-                                                // You find the class definition in index.html, sorry in advance
-                                                class="respawn-btn"
-                                                id="respawn-btn"
-                                                onClick={() => {
-
-                                                }}
-                                                style={{
-                                                    cursor: 'pointer',
-                                                    display: 'flex',
-                                                    "justify-content": 'center',
-                                                    "align-items": 'center',
-                                                }}
-                                            >
-                                                RESPAWN
-                                            </div>
-                                            <div style={{
-                                                display: 'grid',
-                                                "grid-template-columns": '1fr 1fr',
-                                                gap: '8px',
-                                            }}>
-                                                <div
-                                                    style={{
-                                                        display: 'flex',
-                                                        "justify-content": 'center',
-                                                        "align-items": 'center',
-                                                        width: '100%',
-                                                        height: '100%',
-                                                        "box-sizing": 'border-box',
-                                                        background: 'var(--black)',
-                                                    }}
-                                                    class="respawn-home-btn"
-                                                    onClick={() => {
-                                                        // set_game_over(false);
-                                                        // CrazyGamesController.getInstance().clearAllBannerAds();
-                                                        // AudioController.getInstance().stopGameOverMusic();
-                                                        // const div = document.getElementById('game-over');
-                                                        // if (div) {
-                                                        //     div.style.opacity = '1';
-                                                        // }
-                                                        // set_current_page(PageNames.HOME);
-                                                    }}
-                                                >
-                                                    <input
-                                                        type="text"
-                                                        id="username"
-                                                        value={username()}
-                                                        onchange={(ev) => {
-                                                            LocalStorageController.setItem(LocalStorageKeys.USERNAME, ev.target.value || 'GUEST');
-                                                            set_username(ev.target.value || 'GUEST');
-                                                        }}
-                                                        onblur={_ => {
-                                                            if (username() == '') {
-                                                                console.log('blank')
-                                                            } else {
-                                                                console.log('full:', username())
-                                                            }
-                                                        }}
-                                                        placeholder="Input your username"
-                                                        class={[mainMenuStyles.input, ''].join(' ')}
-                                                        style={{
-                                                            width: '100%',
-                                                            height: '100%',
-                                                        }}
-                                                    />
-                                                    <EditIconSvg />
-                                                </div>
-                                                <div
-                                                    style={{
-                                                        display: 'flex',
-                                                        "justify-content": 'center',
-                                                        "align-items": 'center',
-                                                        width: '100%',
-                                                        height: '100%',
-                                                        "box-sizing": 'border-box',
-                                                    }}
-                                                    class="respawn-home-btn"
-                                                    onClick={() => {
-                                                        // !blur_sail_customs_bg() && set_blur_sail_customs_bg(true);
-                                                        set_show_sail_customs(true);
-                                                    }}
-                                                >Edit Sails</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div style={{
-                                        width: '100%',
-                                        height: '100%',
-                                        "min-width": '0',
-                                        "min-height": '0',
-                                        background: 'var(--black)',
-                                        color: 'var(--white)',
-                                        display: 'flex',
-                                        "justify-content": 'center',
-                                        "align-items": 'center',
-                                        // padding: '0 12px',
-                                        "box-sizing": 'border-box',
-                                        "flex-direction": 'column',
-                                        gap: '8px',
-                                    }}
-                                        id="game-over-invite-link">
-                                        <div style={{
-                                            "text-align": 'center',
-                                            "font-weight": '700',
-                                        }}>
-                                            You know, you'll die less if you bring friends
-                                        </div>
-                                        <div
-                                            style={{
-                                                padding: '3px 7px',
-                                                ...(
-                                                    invite_link() ? {
-                                                        "border-bottom": '1px solid var(---white)',
-                                                        color: 'var(white)',
-                                                    } : {
-                                                        background: 'var(--white)',
-                                                        color: 'var(--black)'
-                                                    }
-                                                ),
-                                                "border-radius": '50px',
-                                                "font-weight": 700,
-                                                cursor: 'pointer',
-                                            }}
-                                            onclick={async () => {
-                                                if (invite_link()) {
-                                                } else {
-                                                    // const inviteURL = CrazyGamesController.getInstance().getInviteLink();
-                                                    const inviteURL = await PokiController.getInstance().getInviteLink();
-
-                                                    if (inviteURL) {
-                                                        set_invite_link(inviteURL);
-                                                        navigator.clipboard.writeText(inviteURL);
-                                                    }
-                                                }
-                                            }}
-                                        >
-                                            {
-                                                // invite_link() && CrazyGamesController.getInstance().sdk ?
-                                                invite_link() && PokiController.getInstance().sdk ?
-                                                    <div style={{
-                                                        "text-align": 'center',
-                                                    }}>
-                                                        <input
-                                                            type='text'
-                                                            value={invite_link()}
-                                                            style={{
-                                                                background: 'white',
-                                                                "user-select": 'all',
-                                                                color: 'var(--black)',
-                                                                "border-left": 'none',
-                                                                "border-right": 'none',
-                                                                "border-top": 'none',
-                                                                "border-bottom": '1px solid var(--white)',
-                                                                outline: 'none',
-                                                            }}
-                                                            readOnly
-                                                            onClick={function () {
-                                                                this.select();
-                                                            } as (this: HTMLInputElement) => {}}
-                                                            id="invite-link"
-                                                        />
-                                                        <br />
-                                                        <label for="invite-link" style={{
-                                                            color: 'var(--white)',
-                                                            "font-size": '12px',
-                                                        }}>Link Copied!</label>
-                                                    </div> :
-                                                    'Copy Your Lobby Link'
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            {/* <div style={{
-                                display: 'flex',
-                                "justify-content": 'center',
-                                "align-items": 'center',
-                                "margin-top": '4px',
-                                "pointer-events": 'all',
+                                background: 'var(--grey)',
+                                "border-radius": '4px',
+                                overflow: 'hidden',
+                                "backdrop-filter": 'blur(4px)'
                             }}>
-                                <div
-                                    style={{
-                                        width: '300px',
-                                        height: '250px',
-                                    }}
-                                    id="game-over-banner"
-                                ></div>
-                            </div> */}
-                        </div>
-                    </div>}
-                </>)
-            }
-        </div >
+                                <div class="bar" style={{
+                                    width: '100%',
+                                    height: ix == 0 ? '14%' : '0%',
+                                    background: 'var(--white)',
+                                }}></div>
+                            </div>
+                        </span>
+                    </div>
+                })}
+            </nav>
+
+            {/* Contact Form */}
+            <div
+                style={{
+                    color: 'white',
+                    "font-weight": 900,
+                    transition: 'transform .25s, opacity .25s',
+                    "transition-duration": '.25s',
+                    "will-change": 'transform, opacity',
+                    opacity: 0,
+                    transform: 'translateY(10%)',
+                    position: 'fixed',
+                    width: '100%',
+                    height: '100%',
+                    "font-size": '95px',
+                    display: 'flex',
+                    "align-items": 'center',
+                    "justify-content": 'center',
+                }}
+                id="contact-form"
+            >
+                A contact form
+            </div>
+        </div>
     );
 };
 

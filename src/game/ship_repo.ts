@@ -21,6 +21,9 @@ export enum MESH_NAMES {
     GAMEJOLT = "GAMEJOLT",
     MISSILE = "MISSILE",
     BOX = "BOX",
+    BOX_LIGHTS = "BOX_LIGHTS",
+    WHO_WE_ARE = "WHO_WE_ARE",
+    WHAT_WE_DO = "WHAT_WE_DO",
 }
 
 export enum SHIP_SCALES {
