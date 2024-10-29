@@ -22,7 +22,7 @@
   "scripts": {
     "dev": "vite --config vite/config.dev.mjs",
     "build-raw": "vite build --config vite/config.prod.mjs",
-    "build": "npm run build-raw && node compress.mjs",
+    "build": "npm run build-raw",
     "build-no-comp": "bun run build-raw",
     "build-assets": "bun ./development_utils/clean-ship-data.ts",
     "build-images": "bun ./process-images.js",
