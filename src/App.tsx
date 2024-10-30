@@ -4,12 +4,9 @@ import { LocalStorageController } from './game/Controllers/LocalStorageControlle
 import { ITransformPayload } from './game/Controllers/NetController';
 import { Notif } from './game/Controllers/NotifierController';
 import { SBGame } from './game/SBGame';
-import mainMenuStyles from './game/commons/css/MainMenu.module.css';
 import { SAIL_NAMES } from './game/commons/customizations/sails';
 import { LocalStorageKeys } from './game/commons/enums/LocalStorageKeys';
-import { EditIconSvg } from './game/commons/icons/EditIconSVG';
 import { CrazyGamesController } from './game/commons/vendors/CrazyGamesController';
-import { PokiController } from './game/commons/vendors/PokiController';
 import { MAP_SPECIAL_INDICATOR } from './game/constants';
 
 export enum PageNames {
