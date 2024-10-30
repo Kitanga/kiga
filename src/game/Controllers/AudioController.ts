@@ -1,11 +1,9 @@
 import { Tween } from "@tweenjs/tween.js";
-import { createEffect } from "solid-js";
 import { Audio, AudioListener, Object3D, PositionalAudio } from "three";
-import { boss_id, game_over, mute, opponents, player_near_boss, set_mute } from "../../App";
+import { game_over, mute, opponents, set_mute } from "../../App";
 import { AUDIO_NAMES, audio_repo } from "../audio_repo";
-import { NetController } from "./NetController";
-import { LocalStorageController } from "./LocalStorageController";
 import { LocalStorageKeys } from "../commons/enums/LocalStorageKeys";
+import { LocalStorageController } from "./LocalStorageController";
 
 const HELP_TEXT_VOLUME = 0.52;
 
@@ -47,63 +45,6 @@ export class AudioController {
             this.unmute();
         }
 
-        // Create positional audio files now
-        [
-            AUDIO_NAMES.GUN_FIRE,
-            AUDIO_NAMES.GUN_FIRE_TAIL,
-            AUDIO_NAMES.SHIP_SINK,
-        ].forEach(key => {
-            this.createPositionalAudioPool(key);
-        });
-
-        // Create normal audio
-        const auds = this.audioList;
-
-        [
-            AUDIO_NAMES.HELP_WELCOME,
-            AUDIO_NAMES.HELP_MOVEMENT,
-            AUDIO_NAMES.HELP_FIRING,
-            AUDIO_NAMES.HELP_OUTRO,
-            AUDIO_NAMES.HELP_CRUISE_BARRELS,
-            AUDIO_NAMES.HELP_MOBILE_NO_SUPPORT,
-            AUDIO_NAMES.NO_GUN_FIRE,
-            AUDIO_NAMES.LEVEL_UP_SHOUT,
-            AUDIO_NAMES.PICK_UP,
-            AUDIO_NAMES.GUN_FIRE,
-            // AUDIO_NAMES.MAIN_MENU,
-            AUDIO_NAMES.GAME_OVER,
-            AUDIO_NAMES.BOSS,
-            AUDIO_NAMES.CHAMPION_OF_THE_SEA,
-            AUDIO_NAMES.MAKE_THEM_REMEMBER,
-            AUDIO_NAMES.SHIP_HIT,
-            AUDIO_NAMES.GET_BACK,
-        ].forEach(key => {
-            const sound = new Audio(listener);
-            sound.setBuffer(audio_repo[key]);
-            sound.setLoop(false);
-            auds.set(key, sound);
-            sound.gain.disconnect();
-            sound.gain.connect(masterGain);
-            // console.log('snd:', sound);
-            sound.onEnded = () => {
-                sound.removeFromParent();
-                sound.stop();
-            };
-        });
-
-        createEffect(() => {
-            const player = NetController.instance?.player;
-            const playerID = NetController.instance?.id;
-            const bossSnd = this.audioList.get(AUDIO_NAMES.BOSS);
-
-            if (player_near_boss()) {
-                if (!bossSnd?.isPlaying) {
-                    this.playBossMusic();
-                }
-            } else if (typeof playerID === 'undefined' && playerID != boss_id()) {
-                this.stopBossMusic();
-            }
-        });
     }
 
     resumeContext() {
