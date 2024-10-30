@@ -32,7 +32,6 @@
   "dependencies": {
     "@babel/runtime": "7.24.7",
     "@tweenjs/tween.js": "23.1.2",
-    "firebase": "^10.13.0",
     "solid-js": "1.8.15",
     "three": "0.165.0",
     "zip-a-folder": "^3.1.7"
