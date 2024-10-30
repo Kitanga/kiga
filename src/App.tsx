@@ -18,13 +18,6 @@ export enum GameState {
     READY,
 }
 
-export interface IOpponent extends ITransformPayload {
-    id: string;
-    score: number;
-    name: string;
-    specialty?: MAP_SPECIAL_INDICATOR
-}
-
 export interface IUpgradeBonus {
     type: MAP_SPECIAL_INDICATOR,
     ratio: number;
@@ -47,12 +40,10 @@ export const [disconnected, set_disconnected] = createSignal(false);
 export const [show_new_level_celebration, set_show_new_level_celebration] = createSignal(false);
 export const [video_ad_playing, set_video_ad_playing] = createSignal(false);
 
-export const [opponents, set_opponents] = createSignal<{ [key: string]: IOpponent }>({});
 export const opponents_repo: any = {};
 // setInterval(() => {
 //     set_opponents(opponents_repo);
 // }, 1000);
-export const [crates, set_crates] = createSignal<{ [key: string]: IOpponent }>({});
 export const [upgrades, set_upgrades] = createSignal<IUpgradeBonus[]>([]);
 
 // export const [current_page, set_current_page] = createSignal<PageNames>(new URLSearchParams(location.search).has(InviteLinkParams.INSTANT_JOIN) && JSON.parse(new URLSearchParams(location.search).get(InviteLinkParams.INSTANT_JOIN) || 'false') ? PageNames.PLAY : PageNames.HOME);
