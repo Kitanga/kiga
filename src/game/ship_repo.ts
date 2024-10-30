@@ -24,6 +24,7 @@ export enum MESH_NAMES {
     BOX_LIGHTS = "BOX_LIGHTS",
     WHO_WE_ARE = "WHO_WE_ARE",
     WHAT_WE_DO = "WHAT_WE_DO",
+    CONTACT = "CONTACT",
 }
 
 export enum SHIP_SCALES {

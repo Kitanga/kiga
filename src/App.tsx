@@ -203,8 +203,8 @@ const App = () => {
                 style={{
                     color: 'white',
                     "font-weight": 900,
-                    transition: 'transform .25s, opacity .25s',
-                    "transition-duration": '.25s',
+                    "transition-property": 'transform, opacity',
+                    "transition-duration": '.7s',
                     "will-change": 'transform, opacity',
                     opacity: 0,
                     transform: 'translateY(10%)',

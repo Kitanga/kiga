@@ -13,6 +13,8 @@ import { AnalyticsController } from './Controllers/AnalyticsController';
 import { MESH_NAMES, mesh_repo } from './ship_repo';
 import { lerp } from 'three/src/math/MathUtils.js';
 import { cloneMesh } from './commons/utils/cloneMesh';
+import { debounce } from './commons/utils/debounce';
+import { throttle } from './commons/utils/throttle';
 
 // export const stats = new Stats();
 
@@ -51,7 +53,7 @@ const StartGame = (parent: string) => {
 
     scene = new Scene();
     scene.environmentIntensity = 0.34;
-    scene.fog = new Fog(0x0, 3, 10);
+    scene.fog = new Fog(0x0, 7, 10);
 
     const box = mesh_repo[MESH_NAMES.BOX].scene;
 
@@ -95,12 +97,14 @@ const StartGame = (parent: string) => {
     );
     light1.position.y = 3;
 
-    const light2 = new SpotLight(0xffffff, 1000, 1000, Math.PI, 0.0, 1.0);
+    const light2 = new SpotLight(0xffffff, 1000, 1000, -Math.PI * 0.5);
 
-    light2.scale.multiplyScalar(0.25);
+    // light2.scale.multiplyScalar(0.25);
 
-    light2.position.y = 90;
+    light2.position.y = 3;
+    light2.position.z = 4;
 
+    scene.add(light2);
     // scene.add(light2);
     scene.add(light1);
 
@@ -119,7 +123,7 @@ const StartGame = (parent: string) => {
     // kigaMesh.rotation.x = Math.PI * 0.5 - 0.34;
     kigaMesh.rotation.x = Math.PI * 0.5;
 
-    const kigPos = kigaMesh.position.clone();
+    // const kigPos = kigaMesh.position.clone();
 
     const whoWeAre = mesh_repo[MESH_NAMES.WHO_WE_ARE].scene;
 
@@ -131,22 +135,32 @@ const StartGame = (parent: string) => {
     whatWeDo.position.z = 14;
     whatWeDo.scale.multiplyScalar(1);
 
+    const contact = mesh_repo[MESH_NAMES.CONTACT].scene;
+
+    contact.position.z = 14;
+    contact.scale.multiplyScalar(0.52);
+
     [
         kigaMesh,
         whoWeAre,
         whatWeDo,
-        // cloneMesh(whoWeAre as any, true),
+        contact,
     ].forEach((meshCont, ix) => {
         meshCont.rotation.x = Math.PI * 0.5;
         meshCont.position.y = 2.5;
         meshCont.position.z = (ix * 13) + 1;
+        // (meshCont as any).material = new MeshStandardMaterial({
+        //     fog: false,
+        // })
 
         meshCont.traverseVisible(child => {
             if (child.type == 'Mesh') {
                 const mesh = child as Mesh;
-                mesh.material = new MeshBasicMaterial({
+                mesh.material = new MeshStandardMaterial({
                     color: 0xffffff,
+                    // flatShading: true,
                 });
+                // mesh.receiveShadow = false;
             }
         });
 
@@ -154,20 +168,18 @@ const StartGame = (parent: string) => {
     });
 
 
-    const xOffsetMax = 3;
-    // const xOffsetMin = -0.25;
-    const yOffsetMax = 3;
-    // const yOffsetMin = -0.25;
+    // const xOffsetMax = 3;
+    // const yOffsetMax = 3;
 
-    const logoOffset = {
-        x: 0,
-        y: 0,
-    };
+    // const logoOffset = {
+    //     x: 0,
+    //     y: 0,
+    // };
 
-    window.addEventListener('mousemove', ev => {
-        logoOffset.x = (1 - (ev.clientX / window.innerWidth)) * xOffsetMax;
-        logoOffset.y = (1 - (ev.clientY / window.innerHeight)) * yOffsetMax;
-    });
+    // window.addEventListener('mousemove', ev => {
+    //     logoOffset.x = (1 - (ev.clientX / window.innerWidth)) * xOffsetMax;
+    //     logoOffset.y = (1 - (ev.clientY / window.innerHeight)) * yOffsetMax;
+    // });
 
     renderer = new WebGLRenderer({
         // antialias: !isChromeBook,
@@ -201,6 +213,7 @@ const StartGame = (parent: string) => {
     };
 
     const START_CAM_POS_Z = camera.position.z;
+    const LERP_FORCE = 1.4;
 
     let scrollPos = 0;
     let scrollAmount = 0;
@@ -218,35 +231,18 @@ const StartGame = (parent: string) => {
         {
             section: 'home',
             threshold: SCROLL_AMOUNT_MAX * 0.05,
-            callback: () => {
-                resetForm();
-            },
         },
         {
             section: 'who-we-are',
             threshold: SCROLL_AMOUNT_MAX * 0.4,
-            callback: () => {
-                resetForm();
-            },
         },
         {
             section: 'what-we-do',
             threshold: SCROLL_AMOUNT_MAX * 0.7,
-            callback: () => {
-                resetForm();
-            },
         },
         {
             section: 'contact',
             threshold: SCROLL_AMOUNT_MAX * 1,
-            callback: () => {
-                const contactForm = document.getElementById('contact-form');
-
-                if (contactForm) {
-                    contactForm.style.transform = 'translateY(0)';
-                    contactForm.style.opacity = '1';
-                }
-            },
         },
     ].map((threshold, ix) => {
         return {
@@ -269,7 +265,7 @@ const StartGame = (parent: string) => {
         console.log('set threshold, new scrollAmount:', scrollAmount);
     };
 
-    window.addEventListener('wheel', ev => {
+    window.addEventListener('wheel', throttle(ev => {
         if (!hasScrolled) {
             hasScrolled = true;
             // SCROLL_SIZE = ev.deltaY;
@@ -279,14 +275,15 @@ const StartGame = (parent: string) => {
         }
 
         // scrollAmount += ev.deltaY / SCROLL_SIZE;
-        scrollAmount += (1 * Math.sign(ev.deltaY)) / SCROLL_SIZE;
+        // scrollAmount += (1 * Math.sign(ev.deltaY)) / SCROLL_SIZE;
+        scrollAmount += (SCROLL_SIZE * Math.sign(ev.deltaY));
 
         if (scrollAmount < 0) {
             scrollAmount = 0;
         } else if (scrollAmount >= SCROLL_AMOUNT_MAX) {
             scrollAmount = SCROLL_AMOUNT_MAX;
         }
-    });
+    }, 1000 / 30));
 
     window.addEventListener('scroll', () => {
         console.log('scrolling!');
@@ -337,15 +334,16 @@ const StartGame = (parent: string) => {
             return;
         }
 
-        const kigPosUpt = kigaMesh.position;
+        // const kigPosUpt = kigaMesh.position;
 
-        kigPosUpt
-            .setX(lerp(kigPos.x, kigPos.x + logoOffset.x, DT_RATIO))
-            .setY(lerp(kigPos.y, kigPos.y + logoOffset.y, DT_RATIO));
+        // kigPosUpt
+        //     .setX(lerp(kigPos.x, kigPos.x + logoOffset.x, DT_RATIO))
+        //     .setY(lerp(kigPos.y, kigPos.y + logoOffset.y, DT_RATIO));
 
         totalBarAmount = lerp(totalBarAmount, scrollAmount, DT_RATIO * 3.4);
-        camera.position.z = lerp(camera.position.z, START_CAM_POS_Z + scrollPos, DT_RATIO * 3.4);
-        light1.position.z = lerp(light1.position.z, START_BOX_LIGHTS_POS_Z + scrollPos, DT_RATIO * 3.4);
+        camera.position.z = lerp(camera.position.z, START_CAM_POS_Z + scrollPos, DT_RATIO * LERP_FORCE);
+        light1.position.z = lerp(light1.position.z, START_BOX_LIGHTS_POS_Z + scrollPos, DT_RATIO * LERP_FORCE);
+        light2.position.z = lerp(light2.position.z, START_CAM_POS_Z + scrollPos + 1, DT_RATIO * LERP_FORCE);
 
         let currentThreshold;
         let foundThreshold = false;
