@@ -3,7 +3,6 @@ import { is_mobile, PageNames } from "../../App";
 import { SAIL_NAMES } from "../commons/customizations/sails";
 import { getBucketIX, getBucketName } from "../commons/utils/getBucketKey";
 import { SERVER_OPTION_NAMES } from "../constants";
-import { FiringSide } from "../Templates/Player";
 
 export class AnalyticsController {
     // app = app;
@@ -109,28 +108,6 @@ export class AnalyticsController {
         this.triggerEvent('HAS_ALREADY_ONBOARDED');
     }
 
-    //#region Shooting
-    public logShoot(x: number, y: number, side: FiringSide) {
-        const bucketName = getBucketName(x, y);
-        console.log('logShoot:', bucketName);
-        console.log('Shoot side:', side);
-
-        const gunName = (() => {
-            switch (side) {
-                case FiringSide.FORWARD:
-                    return 'FORWARD';
-                case FiringSide.PORT:
-                    return 'LEFT';
-                case FiringSide.STARBOARD:
-                    return 'RIGHT';
-                case FiringSide.BACKWARD:
-                    return 'BACKWARD';
-            }
-        })();
-
-        this.triggerEvent(`shoot:bucket:${bucketName}`);
-        this.triggerEvent(`shoot:side:${gunName}`);
-    }
 
     public logShootDistFromChest(dist: number) {
         console.log('dist to chest:', dist);
