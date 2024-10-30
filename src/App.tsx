@@ -1,7 +1,6 @@
 import { createEffect, createSignal, onCleanup, onMount } from 'solid-js';
 import { AnalyticsController } from './game/Controllers/AnalyticsController';
 import { LocalStorageController } from './game/Controllers/LocalStorageController';
-import { ITransformPayload } from './game/Controllers/NetController';
 import { Notif } from './game/Controllers/NotifierController';
 import { SBGame } from './game/SBGame';
 import { SAIL_NAMES } from './game/commons/customizations/sails';
